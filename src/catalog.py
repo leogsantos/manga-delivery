@@ -2,7 +2,7 @@ import logging
 import httpx
 from xml.etree import ElementTree as ET
 
-from src.exceptions import MangaDeliveryError
+from src.exceptions import MangaDeliveryError, BotBlockedError
 from src.utils import BROWSER_HEADERS
 
 logger = logging.getLogger(__name__)
@@ -16,15 +16,31 @@ def _extract_slug(url: str) -> str:
     return url.rstrip("/").replace(BASE_URL, "")
 
 
-def list_available_manga() -> list[dict]:
-    """Busca todos os mangás disponíveis no sitemap."""
+def _fetch_sitemap() -> str:
+    """Faz o GET no sitemap e retorna o XML como string."""
     try:
         resp = httpx.get(SITEMAP_URL, timeout=15, follow_redirects=True, headers=BROWSER_HEADERS)
+
+        if resp.status_code == 418:
+            raise BotBlockedError(
+                "O site bloqueou a requisição (418 I'm a teapot). "
+                "Isso geralmente indica ausência ou invalidade do User-Agent. "
+                "Verifique o BROWSER_HEADERS em src/utils.py."
+            )
+
         resp.raise_for_status()
+        return resp.text
+
+    except BotBlockedError:
+        raise
     except httpx.HTTPError as e:
         raise MangaDeliveryError(f"Falha ao acessar sitemap: {e}") from e
 
-    root = ET.fromstring(resp.text)
+
+def list_available_manga() -> list[dict]:
+    """Busca todos os mangás disponíveis no sitemap."""
+    xml_content = _fetch_sitemap()
+    root = ET.fromstring(xml_content)
     namespace = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
 
     mangas = []
@@ -38,6 +54,7 @@ def list_available_manga() -> list[dict]:
             })
 
     return sorted(mangas, key=lambda x: x["last_update"] or "", reverse=True)
+
 
 def print_catalog() -> None:
     mangas = list_available_manga()

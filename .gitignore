@@ -7,3 +7,6 @@ gdrive.json
 oauth_client.json
 token.json
 state.json
+secrets/
+*.pyc
+.pytest_cache/

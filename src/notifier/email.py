@@ -42,7 +42,10 @@ def _get_credentials() -> Credentials:
         if creds.expired and creds.refresh_token:
             try:
                 creds.refresh(Request())
-                token_file.write_text(creds.to_json(), encoding="utf-8")
+                try:
+                    token_file.write_text(creds.to_json(), encoding="utf-8")
+                except OSError as e:
+                    logger.warning(f"Não foi possível salvar token renovado: {e}. Continuando sem persistir.")
                 logger.info("Token OAuth2 renovado automaticamente.")
             except Exception as e:
                 raise EmailSendError(f"Falha ao renovar token OAuth2: {e}") from e

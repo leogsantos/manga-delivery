@@ -1,0 +1,32 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - develop
+      - "feature/**"
+      - "fix/**"
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Instala uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Instala dependências
+        run: uv sync
+
+      - name: Instala Playwright e Chromium
+        run: uv run playwright install chromium --with-deps
+
+      - name: Roda testes unitários
+        run: uv run pytest tests/unit/ -v
