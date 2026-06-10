@@ -26,3 +26,15 @@ dev = [
     "pytest",
     "pytest-asyncio",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest-mock>=3.15.1",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+markers = [
+    "integration: testes que chamam APIs externas reais (desative com -m 'not integration')",
+]
