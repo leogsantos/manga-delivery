@@ -1,0 +1,46 @@
+name: manga-delivery pipeline
+
+on:
+  schedule:
+    - cron: "0 12 * * *"  # todo dia ao meio-dia UTC (09h horário de Brasília)
+  workflow_dispatch:        # permite rodar manualmente pelo GitHub
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Instala uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Instala dependências
+        run: uv sync --no-dev
+
+      - name: Instala Playwright e Chromium
+        run: uv run playwright install chromium --with-deps
+
+      - name: Cria pasta secrets
+        run: mkdir -p secrets
+
+      - name: Escreve token OAuth2 do Google
+        run: echo '${{ secrets.GDRIVE_TOKEN_JSON }}' > secrets/token.json
+
+      - name: Escreve OAuth2 client do Google
+        run: echo '${{ secrets.GDRIVE_OAUTH_CLIENT_JSON }}' > secrets/oauth_client.json
+
+      - name: Roda o pipeline
+        env:
+          GDRIVE_TOKEN_FILE: secrets/token.json
+          GDRIVE_OAUTH_CLIENT_FILE: secrets/oauth_client.json
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+          MANGA_SLUG: ${{ vars.MANGA_SLUG }}
+          GMAIL_FROM: ${{ secrets.GMAIL_FROM }}
+          GMAIL_TO: ${{ secrets.GMAIL_TO }}
+        run: uv run python -m src.main
+
+      - name: Limpa secrets do runner
+        if: always()
+        run: rm -rf secrets/
