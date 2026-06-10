@@ -2,25 +2,20 @@ name: manga-delivery pipeline
 
 on:
   schedule:
-    - cron: "0 12 * * *"  # todo dia ao meio-dia UTC (09h horário de Brasília)
-  workflow_dispatch:        # permite rodar manualmente pelo GitHub
+    - cron: "0 12 * * *"
 
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/leogssantos/manga-delivery:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v4
-
-      - name: Instala uv
-        uses: astral-sh/setup-uv@v5
-
-      - name: Instala dependências
-        run: uv sync --no-dev
-
-      - name: Instala Playwright e Chromium
-        run: uv run playwright install chromium --with-deps
 
       - name: Cria pasta secrets
         run: mkdir -p secrets

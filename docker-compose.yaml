@@ -1,0 +1,10 @@
+services:
+  manga-delivery:
+    image: ghcr.io/leogssantos/manga-delivery:latest
+    env_file:
+      - .env
+    volumes:
+      - ./secrets:/app/secrets:ro
+      - ./output:/app/output
+      - ./downloads:/app/downloads
+    restart: "no"
