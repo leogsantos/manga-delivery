@@ -1,0 +1,28 @@
+[project]
+name = "manga-delivery"
+version = "0.1.0"
+description = "Automated manga chapter delivery pipeline"
+readme = "README.md"
+requires-python = ">=3.13"
+
+dependencies = [
+    "httpx",
+    "beautifulsoup4",
+    "lxml",
+    "img2pdf",
+    "ebooklib",
+    "google-api-python-client",
+    "google-auth",
+    "python-dotenv",
+    "dateparser",
+    "pillow>=12.2.0",
+    "google-auth-oauthlib>=1.4.0",
+    "playwright>=1.60.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "pytest",
+    "pytest-asyncio",
+]
