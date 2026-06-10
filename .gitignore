@@ -1,0 +1,9 @@
+.venv/
+.env
+downloads/
+output/
+__pycache__/
+gdrive.json
+oauth_client.json
+token.json
+state.json
