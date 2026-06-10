@@ -27,9 +27,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Converte username para lowercase
+        id: lower
+        run: echo "username=$(echo '${{ github.actor }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Build e push da imagem
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ghcr.io/leogssantos/manga-delivery:latest
+          tags: ghcr.io/${{ steps.lower.outputs.username }}/manga-delivery:latest
