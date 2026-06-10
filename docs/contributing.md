@@ -1,6 +1,15 @@
 # Contribuindo com o manga-delivery
 
-Obrigado pelo interesse em contribuir! Este documento explica como funciona o processo de contribuição.
+Obrigado pelo interesse em contribuir! Este documento explica como funciona o processo.
+
+## Sumário
+
+- [Antes de começar](#antes-de-começar)
+- [Fluxo de contribuição](#fluxo-de-contribuição)
+- [Adicionando suporte a um novo site de scan](#adicionando-suporte-a-um-novo-site-de-scan)
+- [Padrões do projeto](#padrões-do-projeto)
+- [Reportando bugs](#reportando-bugs)
+- [Sugerindo funcionalidades](#sugerindo-funcionalidades)
 
 ---
 
@@ -15,7 +24,7 @@ Obrigado pelo interesse em contribuir! Este documento explica como funciona o pr
 ## Fluxo de contribuição
 
 ```
-fork → clone → feature/* ou fix/* → PR para develop → review → merge
+fork → clone → branch feature/* ou fix/* → PR para develop → review → merge
 ```
 
 ### 1. Fork e clone
@@ -44,19 +53,25 @@ git checkout -b fix/nome-do-bug
 
 ### 4. Implementa e testa
 
-Antes de abrir o PR, garante que o pipeline roda localmente:
+Antes de abrir o PR, garanta que os testes unitários passam:
+
+```bash
+uv run pytest tests/unit/
+```
+
+Se fizer mudanças que afetam o comportamento do pipeline, teste localmente também:
 
 ```bash
 cp .env.example .env
-# preenche o .env com suas credenciais de teste
+# preencha o .env com suas credenciais
 uv run python -m src.main
 ```
 
 ### 5. Abre o Pull Request
 
 - PR sempre para o branch `develop`, nunca direto para `main`
-- Preenche o template do PR com o que foi feito e como testar
-- Aguarda review
+- Preencha a descrição com o que foi feito e como testar
+- Aguarde review
 
 ---
 
@@ -64,16 +79,16 @@ uv run python -m src.main
 
 O projeto foi pensado para ser extensível. Para adicionar suporte a um novo site:
 
-1. Cria `src/scraper_{nome_do_site}.py` seguindo a mesma interface do `scraper.py`:
-   - Função `download_chapter(slug, chapter_url) -> list[Path]`
-   - Função `cleanup_chapter(slug, chapter_url) -> None`
+1. Crie `src/scraper_{nome_do_site}.py` seguindo a interface do `scraper.py`:
+   - `download_chapter(slug, chapter_url) -> list[Path]`
+   - `cleanup_chapter(slug, chapter_url) -> None`
 
-2. Cria `src/checker_{nome_do_site}.py` seguindo a interface do `checker.py`:
-   - Função `get_latest_chapter(slug) -> dict | None`
+2. Crie `src/checker_{nome_do_site}.py` seguindo a interface do `checker.py`:
+   - `get_latest_chapter(slug) -> dict | None`
 
-3. Documenta o novo site no README na seção de sites suportados
+3. Documente o novo site no README na seção de sites suportados
 
-4. Abre o PR com exemplos de slugs válidos para teste
+4. Abra o PR com exemplos de slugs válidos para teste
 
 ---
 
@@ -100,7 +115,7 @@ Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
 ```
 feat: adiciona suporte ao site xyz
 fix: corrige parsing de capítulos com número decimal
-docs: atualiza README com novo slug
+docs: atualiza setup.md com troubleshooting do Kaspersky
 refactor: extrai lógica de autenticação para módulo próprio
 chore: atualiza dependências
 ```
@@ -118,11 +133,11 @@ chore: atualiza dependências
 
 ## Reportando bugs
 
-Abre uma issue com:
+Abra uma issue com:
 
 - Descrição clara do problema
 - Passos para reproduzir
-- Output do erro (logs completos)
+- Output completo do erro (logs)
 - Versão do Python e sistema operacional
 - Slug do mangá que estava sendo processado
 
@@ -130,7 +145,7 @@ Abre uma issue com:
 
 ## Sugerindo funcionalidades
 
-Abre uma issue com a label `enhancement` descrevendo:
+Abra uma issue com a label `enhancement` descrevendo:
 
 - O problema que a feature resolve
 - Como você imagina que deveria funcionar
@@ -138,6 +153,4 @@ Abre uma issue com a label `enhancement` descrevendo:
 
 ---
 
-## Dúvidas
-
-Abre uma issue com a label `question` — respondemos por lá.
+Dúvidas? Abre uma issue com a label `question`.
