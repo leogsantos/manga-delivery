@@ -30,7 +30,10 @@ def _get_service():
 
     if not creds.valid and creds.expired and creds.refresh_token:
         creds.refresh(Request())
-        token_file.write_text(creds.to_json(), encoding="utf-8")
+        try:
+            token_file.write_text(creds.to_json(), encoding="utf-8")
+        except OSError as e:
+            logger.warning(f"Não foi possível salvar token renovado: {e}. Continuando sem persistir.")
 
     return build("drive", "v3", credentials=creds)
 
