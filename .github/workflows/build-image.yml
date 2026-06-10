@@ -8,6 +8,7 @@ on:
       - "pyproject.toml"
       - ".python-version"
       - "Dockerfile"
+  workflow_dispatch:
 
 jobs:
   build:
