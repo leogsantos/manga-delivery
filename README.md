@@ -90,19 +90,23 @@ Qualquer título disponível no [mangalivre.to](https://mangalivre.to). Para ver
 uv run python -m src.catalog
 ```
 
-Configure o slug no `.env` ou no secret `MANGA_SLUG` do GitHub Actions:
+Configure o slug no `.env` ou na variável `MANGA_SLUG` do GitHub Actions. Múltiplos mangás são separados por vírgula — o pipeline processa cada um em sequência no mesmo run:
 
 ```env
+# um só
 MANGA_SLUG=one-piece
-MANGA_SLUG=bleach
-MANGA_SLUG=chainsaw-man-pt-br
+
+# vários
+MANGA_SLUG=one-piece,bleach,chainsaw-man-pt-br
 ```
+
+Se um slug falhar, o erro é logado e o pipeline continua para o próximo.
 
 ---
 
 ## Roadmap
 
-- [ ] Suporte a múltiplos mangás simultâneos em um único run
+- [x] Suporte a múltiplos mangás simultâneos em um único run
 - [ ] Interface web simples para gerenciar slugs e destinatários
 - [ ] Notificação via Telegram além do email
 - [ ] Suporte a outros sites de scan (fallback automático)
