@@ -8,7 +8,7 @@ jobs:
   run-pipeline:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/leogssantos/manga-delivery:latest
+      image: ghcr.io/${{ github.repository_owner }}/manga-delivery:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
