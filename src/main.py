@@ -21,8 +21,7 @@ from src.notifier.email import send_chapter_email
 from src.state import save_state
 
 
-def run() -> None:
-    slug = os.getenv("MANGA_SLUG", "one-piece")
+def run_single(slug: str) -> None:
     logger.info(f"[{slug}] Iniciando pipeline...")
 
     # 1. Verifica se há capítulo novo
@@ -62,6 +61,19 @@ def run() -> None:
     logger.info(f"[{slug}] Pipeline concluído com sucesso.")
     logger.info(f"[{slug}] PDF Drive: {drive_link_pdf}")
     logger.info(f"[{slug}] EPUB Drive: {drive_link_epub}")
+
+
+def run() -> None:
+    raw = os.getenv("MANGA_SLUG", "one-piece")
+    slugs = [s.strip() for s in raw.split(",") if s.strip()]
+
+    logger.info(f"Slugs configurados: {slugs}")
+
+    for slug in slugs:
+        try:
+            run_single(slug)
+        except Exception:
+            logger.exception(f"[{slug}] Falha no pipeline — continuando para o próximo.")
 
 
 if __name__ == "__main__":

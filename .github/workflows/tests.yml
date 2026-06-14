@@ -12,6 +12,22 @@ on:
       - develop
 
 jobs:
+  validate-workflows:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Instala uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Instala dependências
+        run: uv sync
+
+      - name: Valida consistência dos workflows
+        run: uv run pytest tests/unit/test_workflow_config.py -v
+
   unit-tests:
     runs-on: ubuntu-latest
 
@@ -30,3 +46,11 @@ jobs:
 
       - name: Roda testes unitários
         run: uv run pytest tests/unit/ -v
+
+  gatekeeper:
+    runs-on: ubuntu-latest
+    needs: [validate-workflows, unit-tests]
+
+    steps:
+      - name: Todos os checks passaram
+        run: echo "CI passed — safe to merge."
