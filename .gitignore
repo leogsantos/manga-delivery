@@ -10,3 +10,4 @@ state.json
 secrets/
 *.pyc
 .pytest_cache/
+.claude/
